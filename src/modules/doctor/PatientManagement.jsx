@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { getPatients, updatePatient, deletePatient, getPatientMedicalHistory, addMedicalHistory, updateMedicalHistory, deleteMedicalHistory } from '../../services/database.js';
 import { FiSearch, FiEdit, FiTrash2, FiUser, FiPlus, FiFileText } from 'react-icons/fi';
