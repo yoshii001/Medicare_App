@@ -61,6 +61,23 @@ export const deleteDoctor = async (doctorId) => {
   await deleteRecord(`doctors/${doctorId}`);
 };
 
+
+export const createRecipient = async (recipientData) => {
+  return await createRecord('recipients', recipientData);
+};
+
+export const getRecipients = async () => {
+  return await getRecord('recipients');
+};
+
+export const updateRecipient = async (recipientId, recipientData) => {
+  await updateRecord(`recipients/${recipientId}`, recipientData);
+};
+
+export const deleteRecipient = async (recipientId) => {
+  await deleteRecord(`recipients/${recipientId}`);
+};
+
 // Patient operations
 export const createPatient = async (patientData) => {
   return await createRecord('patients', patientData);

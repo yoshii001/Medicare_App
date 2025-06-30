@@ -25,7 +25,12 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const signInWithEmail = async (email, password) => {
-    return await signInWithEmailAndPassword(auth, email, password);
+    try {
+      return await signInWithEmailAndPassword(auth, email.trim(), password.trim());
+    } catch (error) {
+      console.error("Firebase login error:", error.code, error.message);
+      throw error;
+    }
   };
 
   const signInWithGoogle = async () => {
