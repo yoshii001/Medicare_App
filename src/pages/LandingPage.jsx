@@ -14,7 +14,8 @@ import {
   FiMail,
   FiMapPin
 } from 'react-icons/fi';
-import Chatbot from "../modules/chatbot/Chatbot.jsx";
+
+import ChatBot from "../modules/chatbot/Chatbot.jsx";
 
 const LandingPage = () => {
   const features = [
@@ -455,14 +456,17 @@ const LandingPage = () => {
           {/* Chatbot Toggle Button */}
           <button
               onClick={() => setShowChatbot(!showChatbot)}
-              className="fixed bottom-6 right-6 bg-primary-600 text-white px-4 py-2 rounded-full shadow-md hover:bg-primary-700 z-50"
+              className="fixed bottom-6 right-6 bg-primary-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-primary-700 z-50"
           >
             {showChatbot ? 'Close Chatbot' : 'Chat with us'}
           </button>
 
           {/* Chatbot Panel */}
-          {showChatbot&&<Chatbot/>}
-
+          {showChatbot && (
+              <div className="fixed bottom-20 right-6 w-full max-w-sm z-50">
+                <ChatBot />
+              </div>
+          )}
 
 
 
