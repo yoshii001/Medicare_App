@@ -1,9 +1,44 @@
-
-import  { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
+import { getDoctors } from '../../services/database.js';
+import './chatbot.css'; // Make sure this file exists
 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const GEMINI_API_URL =
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 const GEMINI_API_KEY = 'AIzaSyCVt9L-DXviJFrp1Z6QSpqrlTDP_BdAaq8';
+
+const illnessToSpecialist = {
+    skin: 'Dermatologist',
+    rash: 'Dermatologist',
+    acne: 'Dermatologist',
+    heart: 'Cardiologist',
+    chest: 'Cardiologist',
+    pain: 'General Physician',
+    fever: 'General Medicine',
+    anxiety: 'Psychiatrist',
+    depression: 'Psychiatrist',
+    stomach: 'Gastroenterologist',
+    diabetes: 'Endocrinologist',
+};
+
+const getSpecializationFromIllness = (text) => {
+    const lowerText = text.toLowerCase();
+    for (const keyword in illnessToSpecialist) {
+        if (lowerText.includes(keyword)) {
+            return illnessToSpecialist[keyword];
+        }
+    }
+    return null;
+};
+
+const findDoctorBySpecialty = async (specialty) => {
+    const doctors = await getDoctors();
+    if (!doctors) return null;
+    return Object.values(doctors).find(
+        (doc) => doc.specialization?.toLowerCase() === specialty.toLowerCase()
+    );
+};
+
 const ChatBot = () => {
     const [userMessage, setUserMessage] = useState('');
     const [chatLog, setChatLog] = useState([]);
@@ -18,64 +53,83 @@ const ChatBot = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post(
-                `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
-                {
-                    contents: [
+            const specialization = getSpecializationFromIllness(userMessage);
+
+            if (specialization) {
+                const doctor = await findDoctorBySpecialty(specialization);
+
+                if (doctor) {
+                    setChatLog([
+                        ...newChatLog,
                         {
-                            parts: [{ text: userMessage }],
+                            type: 'bot',
+                            text: `🩺 Based on your symptoms, you should consult a **${specialization}** specialist.\n\n👨‍⚕️ Recommended Doctor: **Dr. ${doctor.name}** (${doctor.qualification || 'MBBS'})`,
                         },
-                    ],
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    ]);
+                } else {
+                    setChatLog([
+                        ...newChatLog,
+                        {
+                            type: 'bot',
+                            text: `⚠️ It looks like you need a **${specialization}**, but we couldn't find any available doctors at the moment.`,
+                        },
+                    ]);
                 }
-            );
+            } else {
+                const response = await axios.post(
+                    `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
+                    {
+                        contents: [
+                            {
+                                parts: [{ text: userMessage }],
+                            },
+                        ],
+                    },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    }
+                );
 
-
-            const reply = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, no response.';
-            setChatLog([...newChatLog, { type: 'bot', text: reply }]);
+                const reply =
+                    response.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+                    'Sorry, no response.';
+                setChatLog([...newChatLog, { type: 'bot', text: reply }]);
+            }
         } catch (error) {
             console.error('Gemini API Error:', error);
-            setChatLog([...newChatLog, { type: 'bot', text: 'Something went wrong.' }]);
+            setChatLog([
+                ...newChatLog,
+                { type: 'bot', text: 'Something went wrong. Please try again.' },
+            ]);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md mt-10">
-            <h2 className="text-xl font-bold mb-4">💬 Gemini Chatbot</h2>
+        <div className="chat-container">
+            <h2>💬 Gemini Chatbot</h2>
 
-            <div className="h-64 overflow-y-auto border p-3 rounded mb-4">
+            <div className="chat-box">
                 {chatLog.map((msg, idx) => (
-                    <div
-                        key={idx}
-                        className={`mb-2 p-2 rounded ${
-                            msg.type === 'user' ? 'bg-blue-100 text-right' : 'bg-gray-100 text-left'
-                        }`}
-                    >
+                    <div key={idx} className={`message ${msg.type}`}>
                         <span>{msg.text}</span>
                     </div>
                 ))}
-                {loading && <div className="text-sm text-gray-500 italic">Bot is typing...</div>}
+                {loading && <div className="typing">Bot is typing...</div>}
             </div>
 
-            <div className="flex gap-2">
+            <div className="input-container">
                 <input
                     type="text"
-                    className="flex-grow border rounded px-3 py-2"
-                    placeholder="Type a message..."
+                    placeholder="Type your illness or message..."
                     value={userMessage}
                     onChange={(e) => setUserMessage(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 />
-                <button
-                    onClick={handleSend}
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                >
+                <button onClick={handleSend} disabled={loading}>
                     Send
                 </button>
             </div>
