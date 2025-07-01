@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
 import { 
   FiActivity, 
@@ -14,6 +14,7 @@ import {
   FiMail,
   FiMapPin
 } from 'react-icons/fi';
+import Chatbot from "../modules/chatbot/Chatbot.jsx";
 
 const LandingPage = () => {
   const features = [
@@ -77,6 +78,7 @@ const LandingPage = () => {
     { number: "99.9%", label: "Uptime Guarantee" }
   ];
 
+  const [showChatbot, setShowChatbot] = useState(false); //  Togglechatbot
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
@@ -450,6 +452,20 @@ const LandingPage = () => {
               <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">Cookie Policy</a>
             </div>
           </div>
+          {/* Chatbot Toggle Button */}
+          <button
+              onClick={() => setShowChatbot(!showChatbot)}
+              className="fixed bottom-6 right-6 bg-primary-600 text-white px-4 py-2 rounded-full shadow-md hover:bg-primary-700 z-50"
+          >
+            {showChatbot ? 'Close Chatbot' : 'Chat with us'}
+          </button>
+
+          {/* Chatbot Panel */}
+          {showChatbot&&<Chatbot/>}
+
+
+
+
         </div>
       </footer>
     </div>

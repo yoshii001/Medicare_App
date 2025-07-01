@@ -11,7 +11,7 @@ import {
   FiClock,
   FiUser,
   FiFileText,
-  FiInbox // ✅ New icon for Recipients
+  FiInbox
 } from 'react-icons/fi';
 
 const Sidebar = () => {
