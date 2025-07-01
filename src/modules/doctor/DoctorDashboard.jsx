@@ -27,18 +27,23 @@ const DoctorDashboard = () => {
         getAppointments()
       ]);
 
-      // Filter data for current doctor
-      const doctorPatients = patients ? Object.values(patients).filter(p => p.doctorId === currentUser?.uid) : [];
-      const doctorAppointments = appointments ? Object.values(appointments).filter(a => a.doctorId === currentUser?.uid) : [];
-      
+      const allAppointments = appointments ? Object.values(appointments) : [];
+
+      const doctorPatients = patients ? Object.values(patients) : [];
+      const doctorAppointments = allAppointments.filter(a => a.doctorId === currentUser?.uid);
+
       const today = format(new Date(), 'yyyy-MM-dd');
       const todayAppts = doctorAppointments.filter(a => a.date === today);
 
       setStats({
         totalPatients: doctorPatients.length,
         todayAppointments: todayAppts.length,
-        reportsGenerated: doctorPatients.reduce((acc, p) => acc + (p.medicalHistory ? Object.keys(p.medicalHistory).length : 0), 0),
-        upcomingAppointments: doctorAppointments.filter(a => new Date(a.date) > new Date()).length
+        reportsGenerated: doctorPatients.reduce(
+            (acc, p) => acc + (p.medicalHistory ? Object.keys(p.medicalHistory).length : 0),
+            0
+        ),
+        upcomingAppointments: doctorAppointments.filter(a => new Date(a.date) > new Date()).length,
+        totalAppointments: allAppointments.length, // ✅ store total appointments
       });
 
       setRecentPatients(doctorPatients.slice(0, 5));
@@ -50,6 +55,7 @@ const DoctorDashboard = () => {
     }
   };
 
+
   const statsCards = [
     {
       title: 'My Patients',
@@ -59,12 +65,19 @@ const DoctorDashboard = () => {
       change: '+3 this week'
     },
     {
-      title: "Today's Appointments",
-      value: stats.todayAppointments,
-      icon: FiCalendar,
-      color: 'bg-success-50 text-success-600',
-      change: '2 completed'
+      title: 'Total Appointments',
+      value: stats.totalAppointments,
+      icon: FiTrendingUp,
+      color: 'bg-blue-50 text-blue-600',
+      change: 'Overall count'
     },
+    // {
+    //   title: "Today's Appointments",
+    //   value: stats.todayAppointments,
+    //   icon: FiCalendar,
+    //   color: 'bg-success-50 text-success-600',
+    //   change: '2 completed'
+    // },
     {
       title: 'Reports Generated',
       value: stats.reportsGenerated,
@@ -79,6 +92,8 @@ const DoctorDashboard = () => {
       color: 'bg-purple-50 text-purple-600',
       change: 'Next: 2:00 PM'
     }
+
+
   ];
 
   if (loading) {

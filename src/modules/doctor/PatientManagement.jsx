@@ -31,14 +31,28 @@ const PatientManagement = () => {
     }
   }, [searchTerm, patients]);
 
-  const loadPatients = async () => {
+  // const loadPatients = async () => {
+  //   try {
+  //     const patientsData = await getPatients();
+  //     if (patientsData) {
+  //       // Filter patients assigned to current doctor
+  //       const doctorPatients = Object.values(patientsData).filter(p => p.doctorId === currentUser?.uid);
+  //       setPatients(doctorPatients);
+  //       setFilteredPatients(doctorPatients);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error loading patients:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+ const loadPatients = async () => {
     try {
       const patientsData = await getPatients();
       if (patientsData) {
-        // Filter patients assigned to current doctor
-        const doctorPatients = Object.values(patientsData).filter(p => p.doctorId === currentUser?.uid);
-        setPatients(doctorPatients);
-        setFilteredPatients(doctorPatients);
+        const allPatients = Object.values(patientsData);
+        setPatients(allPatients);
+        setFilteredPatients(allPatients);
       }
     } catch (error) {
       console.error('Error loading patients:', error);
@@ -46,6 +60,7 @@ const PatientManagement = () => {
       setLoading(false);
     }
   };
+
 
   const handleDeletePatient = async (patientId) => {
     if (window.confirm('Are you sure you want to delete this patient?')) {
@@ -232,3 +247,5 @@ const PatientManagement = () => {
 };
 
 export default PatientManagement;
+
+
