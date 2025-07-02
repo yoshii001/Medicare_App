@@ -29,7 +29,13 @@ const DoctorDashboard = () => {
 
       const allAppointments = appointments ? Object.values(appointments) : [];
 
-      const doctorPatients = patients ? Object.values(patients) : [];
+      // const doctorPatients = patients ? Object.values(patients) : [];
+      const doctorPatients = patients
+          ? Object.entries(patients)
+              .filter(([_, p]) => p.doctorId === currentUser?.uid)
+              .map(([key, p]) => ({ ...p, id: p.id || key }))
+          : [];
+
       const doctorAppointments = allAppointments.filter(a => a.doctorId === currentUser?.uid);
 
       const today = format(new Date(), 'yyyy-MM-dd');

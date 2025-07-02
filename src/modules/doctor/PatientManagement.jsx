@@ -46,23 +46,42 @@ const PatientManagement = () => {
   //     setLoading(false);
   //   }
   // };
- const loadPatients = async () => {
-    try {
-      const patientsData = await getPatients();
-      if (patientsData) {
-        const allPatients = Object.values(patientsData);
-        setPatients(allPatients);
-        setFilteredPatients(allPatients);
-      }
-    } catch (error) {
-      console.error('Error loading patients:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+ // const loadPatients = async () => {
+ //    try {
+ //      const patientsData = await getPatients();
+ //      if (patientsData) {
+ //        const allPatients = Object.values(patientsData);
+ //        setPatients(allPatients);
+ //        setFilteredPatients(allPatients);
+ //      }
+ //    } catch (error) {
+ //      console.error('Error loading patients:', error);
+ //    } finally {
+ //      setLoading(false);
+ //    }
+ //  };
+    const loadPatients = async () => {
+        try {
+            const patientsData = await getPatients();
+            if (patientsData) {
+                // Only load patients assigned to current doctor
+                const doctorPatients = Object.entries(patientsData)
+                    .filter(([_, p]) => p.doctorId === currentUser?.uid)
+                    .map(([key, p]) => ({ ...p, id: p.id || key }));
+
+                setPatients(doctorPatients);
+                setFilteredPatients(doctorPatients);
+            }
+        } catch (error) {
+            console.error('Error loading patients:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
-  const handleDeletePatient = async (patientId) => {
+
+    const handleDeletePatient = async (patientId) => {
     if (window.confirm('Are you sure you want to delete this patient?')) {
       try {
         await deletePatient(patientId);
