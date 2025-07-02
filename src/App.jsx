@@ -9,6 +9,9 @@ import Login from './pages/Login.jsx';
 // Admin Module
 import AdminDashboard from './modules/admin/AdminDashboard.jsx';
 import DoctorManagement from './modules/admin/DoctorManagement.jsx';
+//
+import RecipientManagement from './modules/admin/RecipientManagement.jsx';
+
 
 // Doctor Module
 import DoctorDashboard from './modules/doctor/DoctorDashboard.jsx';
@@ -76,6 +79,15 @@ const AppRoutes = () => {
           </Layout>
         </ProtectedRoute>
       } />
+    {/*reseption */}
+
+    <Route path="/recipients" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                    <Layout>
+                        <RecipientManagement />
+                    </Layout>
+                </ProtectedRoute>
+            } />
 
       {/* Doctor Routes */}
       <Route path="/doctor/dashboard" element={

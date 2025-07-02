@@ -10,7 +10,9 @@ import {
   FiActivity,
   FiClock,
   FiUser,
-  FiFileText
+  FiFileText,
+
+  FiInbox
 } from 'react-icons/fi';
 
 const Sidebar = () => {
@@ -36,6 +38,9 @@ const Sidebar = () => {
 
           { path: '/clinics', icon: FiUser, label: 'Clinics' },
 
+           // reception
+        { path: '/recipients', icon: FiInbox, label: 'Recipients' },
+
         ];
       
       case 'doctor':
@@ -53,7 +58,8 @@ const Sidebar = () => {
 
 
         //AppointmentList
-        { path: '/AppointmentList', icon: FiClock, label: 'Appoinments' }
+        { path: '/AppointmentList', icon: FiClock, label: 'Appoinments' },
+       
         ];
       
       default:

@@ -155,3 +155,20 @@ export const deleteAppointment = async (appointmentId) => {
 export const updateAppointmentStatus = async (appointmentId, status) => {
   await updateRecord(`appointments/${appointmentId}`, { status });
 };
+
+//
+export const createRecipient = async (recipientData) => {
+  return await createRecord('recipients', recipientData);
+};
+
+export const getRecipients = async () => {
+  return await getRecord('recipients');
+};
+
+export const updateRecipient = async (recipientId, recipientData) => {
+  await updateRecord(`recipients/${recipientId}`, recipientData);
+};
+
+export const deleteRecipient = async (recipientId) => {
+  await deleteRecord(`recipients/${recipientId}`);
+};
