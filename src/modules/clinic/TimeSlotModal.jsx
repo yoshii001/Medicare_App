@@ -248,7 +248,7 @@ export default TimeSlotModal;
 
 import React, { useState, useEffect } from 'react';
 import { FiX, FiCalendar, FiClock, FiUser } from 'react-icons/fi';
-import PatientAssignModal from './PatientAssignModal'; // ✅ Make sure path is correct
+import PatientAssignModal from './PatientAssignModal'; // ✅ Adjust path if needed
 
 const TimeSlotModal = ({ slot, doctors, onSave, onClose }) => {
   const [formData, setFormData] = useState({
@@ -262,8 +262,7 @@ const TimeSlotModal = ({ slot, doctors, onSave, onClose }) => {
     status: 'available',
     maxPatients: 1,
     notes: '',
-    patientId: '',
-    patientName: '',
+    assignedPatients: []
   });
 
   const [showAssignModal, setShowAssignModal] = useState(false);
@@ -277,57 +276,57 @@ const TimeSlotModal = ({ slot, doctors, onSave, onClose }) => {
     }
   }, [slot]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  
-    const selectedDoctor = doctors.find(d => d.id === formData.doctorId);
-  
-    const slotData = {
-      ...formData,
-      doctorName: selectedDoctor ? selectedDoctor.name : '',
-      specialization: selectedDoctor ? selectedDoctor.specialization : '',
-    };
-  
-    // Remove undefined values (Firebase doesn't accept them)
-    if (!formData.patientId) {
-      delete slotData.patientId;
-    }
-    if (!formData.patientName) {
-      delete slotData.patientName;
-    }
-  
-    onSave(slotData);
+  const calculateDuration = (start, end) => {
+    if (!start || !end) return 0;
+    const [sh, sm] = start.split(':').map(Number);
+    const [eh, em] = end.split(':').map(Number);
+    const startMin = sh * 60 + sm;
+    const endMin = eh * 60 + em;
+    const diff = endMin - startMin;
+    return diff > 0 ? diff : 0;
   };
-  
 
   const handleChange = (e) => {
-    setFormData({
+    const { name, value } = e.target;
+
+    let updated = { ...formData, [name]: value };
+
+    if (name === 'startTime' || name === 'endTime') {
+      updated.duration = calculateDuration(
+        name === 'startTime' ? value : formData.startTime,
+        name === 'endTime' ? value : formData.endTime
+      );
+    }
+
+    setFormData(updated);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const selectedDoctor = doctors.find(d => d.id === formData.doctorId);
+    const slotData = {
       ...formData,
-      [e.target.name]: e.target.value
-    });
+      doctorName: selectedDoctor?.name || '',
+      specialization: selectedDoctor?.specialization || '',
+    };
+    onSave(slotData);
   };
 
   const handleAssignPatient = (patient) => {
-    setFormData(prev => ({
-      ...prev,
-      patientId: patient.id,
-      patientName: patient.name
-    }));
+    setFormData((prev) => {
+      if (
+        prev.assignedPatients.find((p) => p.id === patient.id) ||
+        prev.assignedPatients.length >= 5
+      ) {
+        return prev;
+      }
+      return {
+        ...prev,
+        assignedPatients: [...prev.assignedPatients, patient]
+      };
+    });
     setShowAssignModal(false);
   };
-
-  const generateTimeOptions = () => {
-    const times = [];
-    for (let hour = 8; hour < 20; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        times.push(timeString);
-      }
-    }
-    return times;
-  };
-
-  const timeOptions = generateTimeOptions();
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -358,46 +357,45 @@ const TimeSlotModal = ({ slot, doctors, onSave, onClose }) => {
             </div>
           </div>
 
-          {/* Time */}
+          {/* Time Inputs */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="form-label">Start Time *</label>
-              <div className="relative">
-                <FiClock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <select
-                  name="startTime"
-                  value={formData.startTime}
-                  onChange={handleChange}
-                  required
-                  className="form-input pl-10"
-                >
-                  {timeOptions.map(time => (
-                    <option key={time} value={time}>{time}</option>
-                  ))}
-                </select>
-              </div>
+              <input
+                type="time"
+                name="startTime"
+                value={formData.startTime}
+                onChange={handleChange}
+                required
+                className="form-input"
+              />
             </div>
 
             <div>
               <label className="form-label">End Time *</label>
-              <div className="relative">
-                <FiClock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <select
-                  name="endTime"
-                  value={formData.endTime}
-                  onChange={handleChange}
-                  required
-                  className="form-input pl-10"
-                >
-                  {timeOptions.map(time => (
-                    <option key={time} value={time}>{time}</option>
-                  ))}
-                </select>
-              </div>
+              <input
+                type="time"
+                name="endTime"
+                value={formData.endTime}
+                onChange={handleChange}
+                required
+                className="form-input"
+              />
             </div>
           </div>
 
-          {/* Doctor Selection */}
+          {/* Auto-calculated duration */}
+          <div>
+            <label className="form-label">Duration (minutes)</label>
+            <input
+              type="number"
+              value={formData.duration}
+              readOnly
+              className="form-input bg-gray-100 cursor-not-allowed"
+            />
+          </div>
+
+          {/* Doctor Select */}
           <div>
             <label className="form-label">Assign Doctor *</label>
             <div className="relative">
@@ -419,39 +417,6 @@ const TimeSlotModal = ({ slot, doctors, onSave, onClose }) => {
             </div>
           </div>
 
-          {/* Duration & Max Patients */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="form-label">Duration (minutes)</label>
-              <select
-                name="duration"
-                value={formData.duration}
-                onChange={handleChange}
-                className="form-input"
-              >
-                <option value={15}>15 minutes</option>
-                <option value={30}>30 minutes</option>
-                <option value={45}>45 minutes</option>
-                <option value={60}>1 hour</option>
-                <option value={90}>1.5 hours</option>
-                <option value={120}>2 hours</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="form-label">Max Patients</label>
-              <input
-                type="number"
-                name="maxPatients"
-                value={formData.maxPatients}
-                onChange={handleChange}
-                min="1"
-                max="10"
-                className="form-input"
-              />
-            </div>
-          </div>
-
           {/* Status */}
           <div>
             <label className="form-label">Status</label>
@@ -462,8 +427,7 @@ const TimeSlotModal = ({ slot, doctors, onSave, onClose }) => {
               className="form-input"
             >
               <option value="available">Available</option>
-              <option value="booked">Booked</option>
-              <option value="blocked">Blocked</option>
+              {/* Future: Booked / Blocked */}
             </select>
           </div>
 
@@ -480,27 +444,6 @@ const TimeSlotModal = ({ slot, doctors, onSave, onClose }) => {
             />
           </div>
 
-          {/* Patient Assign */}
-          <div>
-            <label className="form-label">Patient</label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="text"
-                readOnly
-                value={formData.patientName || ''}
-                className="form-input flex-1"
-                placeholder="No patient assigned"
-              />
-              <button
-                type="button"
-                onClick={() => setShowAssignModal(true)}
-                className="btn-primary px-4"
-              >
-                Assign Patient
-              </button>
-            </div>
-          </div>
-
           {/* Submit Buttons */}
           <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
             <button type="button" onClick={onClose} className="btn-secondary">
@@ -512,11 +455,12 @@ const TimeSlotModal = ({ slot, doctors, onSave, onClose }) => {
           </div>
         </form>
 
-        {/* Patient Modal */}
+        {/* Optional Patient Assignment Modal */}
         {showAssignModal && (
           <PatientAssignModal
             onAssign={handleAssignPatient}
             onClose={() => setShowAssignModal(false)}
+            assignedPatients={formData.assignedPatients}
           />
         )}
       </div>

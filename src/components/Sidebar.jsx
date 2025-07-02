@@ -49,7 +49,11 @@ const Sidebar = () => {
         return [
           { path: '/clinic/dashboard', icon: FiHome, label: 'Dashboard' },
           { path: '/clinic/patients', icon: FiUsers, label: 'Patient Registration' },
-          { path: '/clinic/timeslots', icon: FiClock, label: 'Time Slots' }
+          { path: '/clinic/timeslots', icon: FiClock, label: 'Time Slots' },
+
+
+        //AppointmentList
+        { path: '/AppointmentList', icon: FiClock, label: 'Appoinments' }
         ];
       
       default:

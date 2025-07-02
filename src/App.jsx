@@ -22,6 +22,8 @@ import TimeSlotManagement from './modules/clinic/TimeSlotManagement.jsx';
 import PatientAssignment from './modules/clinic/PatientAssignModal.jsx';
 import ClinicManagement from './modules/clinic/ClinicManagement.jsx';
 
+import AppointmentList from './modules/appointment/AppointmentList.jsx';
+
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
 
@@ -125,6 +127,17 @@ const AppRoutes = () => {
     </Layout>
   </ProtectedRoute>
 } />
+
+<Route path="/AppointmentList" element={
+  <ProtectedRoute allowedRoles={['receptionist']}>
+    <Layout>
+      <AppointmentList />
+    </Layout>
+  </ProtectedRoute>
+} />
+
+
+
 
 <Route path="/clinics" element={
   <ProtectedRoute allowedRoles={['admin']}>
