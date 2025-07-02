@@ -4,6 +4,9 @@ import { FiX, FiUser, FiMail, FiPhone, FiMapPin, FiTag } from 'react-icons/fi';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../services/firebase'; // path to your firebase config
 
+//
+import { createReceptionist } from '../../services/database'
+
 
 const RecipientModal = ({ recipient, onSave, onClose }) => {
     const [formData, setFormData] = useState({
@@ -29,7 +32,8 @@ const RecipientModal = ({ recipient, onSave, onClose }) => {
         onSave(formData);
     };
 */
-
+ 
+/*
 const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -55,7 +59,26 @@ const handleSubmit = async (e) => {
         alert("Failed to create user: " + error.message);
     }
 };
+*/
 
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { password, ...rest } = formData;
+  
+      // Call function to create receptionist
+      await createReceptionist({
+        ...rest,
+        password,
+      });
+  
+      onSave(); // optional: refresh list
+    } catch (error) {
+      console.error("Error creating receptionist:", error.message);
+      alert("Failed to create receptionist: " + error.message);
+    }
+  };
 
 
     const handleChange = (e) => {

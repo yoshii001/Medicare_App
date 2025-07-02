@@ -1,6 +1,8 @@
-import { database } from './firebase.js';
+import { database, auth,secondaryAuth } from './firebase.js';
 import { ref, push, set, get, update, remove, onValue, off } from 'firebase/database';
 import { v4 as uuidv4 } from 'uuid';
+
+import {createUserWithEmailAndPassword, signOut} from "firebase/auth";
 
 // Generic database operations
 export const createRecord = async (path, data) => {
@@ -156,11 +158,56 @@ export const updateAppointmentStatus = async (appointmentId, status) => {
   await updateRecord(`appointments/${appointmentId}`, { status });
 };
 
+//reseptionist
+
+
 //
+export const createReceptionist = async (receptionistData) => {
+  try {
+    // Use secondary auth instance to avoid logging out admin
+    const userCredential = await createUserWithEmailAndPassword(
+      secondaryAuth,
+      receptionistData.email,
+      receptionistData.password
+    );
+    const uid = userCredential.user.uid;
+
+    // Sign out from secondary session (optional but recommended)
+    await signOut(secondaryAuth);
+
+    const { password, ...dataWithoutPassword } = receptionistData;
+
+    // Save in `receptionists` path
+    const receptionistRef = ref(database, `receptionists/${uid}`);
+    await set(receptionistRef, {
+      ...dataWithoutPassword,
+      id: uid,
+      uid,
+      createdAt: new Date().toISOString(),
+    });
+
+    // Also create an entry under `users/` with role = receptionist
+    const userRef = ref(database, `users/${uid}`);
+    await set(userRef, {
+      email: receptionistData.email,
+      role: 'receptionist',
+      uid,
+      createdAt: new Date().toISOString(),
+    });
+
+    return uid;
+  } catch (error) {
+    console.error("Error creating receptionist:", error);
+    throw error;
+  }
+};
+
+
 export const createRecipient = async (recipientData) => {
   return await createRecord('recipients', recipientData);
 };
 
+//
 export const getRecipients = async () => {
   return await getRecord('recipients');
 };
