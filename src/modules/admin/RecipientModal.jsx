@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { FiX, FiUser, FiMail, FiPhone, FiMapPin, FiTag } from 'react-icons/fi';
 
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../services/firebase'; // path to your firebase config
+
+
 const RecipientModal = ({ recipient, onSave, onClose }) => {
     const [formData, setFormData] = useState({
         name: '',
@@ -8,7 +12,9 @@ const RecipientModal = ({ recipient, onSave, onClose }) => {
         phone: '',
         address: '',
         category: '',
-        status: 'active'
+        status: 'active',
+
+         password: ''
     });
 
     useEffect(() => {
@@ -17,10 +23,40 @@ const RecipientModal = ({ recipient, onSave, onClose }) => {
         }
     }, [recipient]);
 
+    /*
     const handleSubmit = (e) => {
         e.preventDefault();
         onSave(formData);
     };
+*/
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        // 1. Firebase Authentication - Create new user
+        const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            formData.email,
+            formData.password
+        );
+
+        const user = userCredential.user;
+
+        // 2. Remove password before saving form data
+        const { password, ...recipientData } = formData;
+
+        // 3. Save the rest of the recipient data to DB or parent handler
+        onSave({
+            ...recipientData,
+            uid: user.uid
+        });
+    } catch (error) {
+        console.error("Error creating user:", error.message);
+        alert("Failed to create user: " + error.message);
+    }
+};
+
+
 
     const handleChange = (e) => {
         setFormData({
@@ -79,6 +115,29 @@ const RecipientModal = ({ recipient, onSave, onClose }) => {
                                 />
                             </div>
                         </div>
+
+                        
+
+
+                        <div>
+                            <label className="form-label">Password *</label>
+                            <div className="relative">
+                                <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                <input
+                                 type="password"
+                                  name="password"
+                                value={formData.password} // ✅ bind to state
+                              onChange={handleChange}   // ✅ handle user input
+                                  required
+                                   className="form-input pl-10"
+                                 placeholder="Password"
+                                 />
+
+                            </div>
+                        </div>
+
+
+
 
                         <div>
                             <label className="form-label">Phone Number</label>
