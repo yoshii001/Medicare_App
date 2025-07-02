@@ -16,16 +16,21 @@ const DoctorModal = ({ doctor, onSave, onClose }) => {
     status: 'active'
   });
 
+
   useEffect(() => {
     if (doctor) {
       setFormData(doctor);
     }
   }, [doctor]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(formData);
+
+    await onSave(formData); // make sure onSave is async or returns a promise
+
+
   };
+
 
   const handleChange = (e) => {
     setFormData({

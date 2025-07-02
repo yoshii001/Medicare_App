@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { getDoctors } from '../../services/database.js';
-import './chatbot.css'; // Make sure this file exists
+import './chatbot.css';
 
 const GEMINI_API_URL =
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';

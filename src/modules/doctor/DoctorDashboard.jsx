@@ -43,7 +43,7 @@ const DoctorDashboard = () => {
             0
         ),
         upcomingAppointments: doctorAppointments.filter(a => new Date(a.date) > new Date()).length,
-        totalAppointments: allAppointments.length, // ✅ store total appointments
+        totalAppointments: allAppointments.length, //  store total appointments
       });
 
       setRecentPatients(doctorPatients.slice(0, 5));

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { getDoctors, createDoctor, updateDoctor, deleteDoctor } from '../../services/database.js';
+import {getDoctors, createDoctor, updateDoctor, deleteDoctor, createUser} from '../../services/database.js';
 import { FiPlus, FiEdit, FiTrash2, FiUser, FiMail, FiPhone, FiSearch } from 'react-icons/fi';
 import DoctorModal from './DoctorModal.jsx';
+
 
 const DoctorManagement = () => {
   const [doctors, setDoctors] = useState([]);
@@ -15,12 +16,24 @@ const DoctorManagement = () => {
     loadDoctors();
   }, []);
 
+  // useEffect(() => {
+  //   if (searchTerm) {
+  //     const filtered = doctors.filter(doctor =>
+  //       doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       doctor.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       doctor.specialization.toLowerCase().includes(searchTerm.toLowerCase())
+  //     );
+  //     setFilteredDoctors(filtered);
+  //   } else {
+  //     setFilteredDoctors(doctors);
+  //   }
+  // }, [searchTerm, doctors]);
   useEffect(() => {
     if (searchTerm) {
       const filtered = doctors.filter(doctor =>
-        doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doctor.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doctor.specialization.toLowerCase().includes(searchTerm.toLowerCase())
+          (doctor.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+          (doctor.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+          (doctor.specialization?.toLowerCase() || '').includes(searchTerm.toLowerCase())
       );
       setFilteredDoctors(filtered);
     } else {
@@ -28,20 +41,45 @@ const DoctorManagement = () => {
     }
   }, [searchTerm, doctors]);
 
+
+  // const loadDoctors = async () => {
+  //   try {
+  //     const doctorsData = await getDoctors();
+  //     if (doctorsData) {
+  //       const doctorsList = Object.values(doctorsData);
+  //       setDoctors(doctorsList);
+  //       setFilteredDoctors(doctorsList);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error loading doctors:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const loadDoctors = async () => {
     try {
       const doctorsData = await getDoctors();
-      if (doctorsData) {
-        const doctorsList = Object.values(doctorsData);
+      if (doctorsData && typeof doctorsData === 'object') {
+        const doctorsList = Object.entries(doctorsData).map(([key, doctor]) => ({
+          ...doctor,
+          id: doctor.id || doctor.uid || key,
+        }));
         setDoctors(doctorsList);
         setFilteredDoctors(doctorsList);
+      } else {
+        setDoctors([]);
+        setFilteredDoctors([]);
       }
     } catch (error) {
       console.error('Error loading doctors:', error);
+      setDoctors([]); // fallback
+      setFilteredDoctors([]);
     } finally {
       setLoading(false);
     }
   };
+
 
   const handleAddDoctor = () => {
     setSelectedDoctor(null);
@@ -57,24 +95,43 @@ const DoctorManagement = () => {
     if (window.confirm('Are you sure you want to delete this doctor?')) {
       try {
         await deleteDoctor(doctorId);
-        loadDoctors();
+        await loadDoctors();
       } catch (error) {
         console.error('Error deleting doctor:', error);
       }
     }
   };
 
+  // const handleSaveDoctor = async (doctorData) => {
+  //   try {
+  //     if (selectedDoctor) {
+  //       await updateDoctor(selectedDoctor.id, doctorData);
+  //     } else {
+  //       await createDoctor(doctorData);
+  //     }
+  //     setShowModal(false);
+  //     loadDoctors();
+  //   } catch (error) {
+  //     console.error('Error saving doctor:', error);
+  //   }
+  // };
+
+
+
   const handleSaveDoctor = async (doctorData) => {
+    setLoading(true);
     try {
       if (selectedDoctor) {
         await updateDoctor(selectedDoctor.id, doctorData);
       } else {
         await createDoctor(doctorData);
       }
-      setShowModal(false);
-      loadDoctors();
+       setShowModal(false);
+       await loadDoctors();
     } catch (error) {
-      console.error('Error saving doctor:', error);
+      console.error('Error saving doctor:', error.message);
+    }finally {
+      setLoading(false); // hide spinner
     }
   };
 
@@ -202,6 +259,32 @@ const DoctorManagement = () => {
                   </td>
                 </tr>
               ))}
+              {/*{filteredDoctors.map((doctor, index) => (*/}
+              {/*    <tr key={doctor.id || doctor.uid || index} className="hover:bg-gray-50 transition-colors duration-200">*/}
+              {/*      <td className="px-4 py-3">{doctor.name}</td>*/}
+              {/*      <td className="px-4 py-3">{doctor.email}</td>*/}
+              {/*      <td className="px-4 py-3">{doctor.phone}</td>*/}
+              {/*      <td className="px-4 py-3">{doctor.specialization}</td>*/}
+              {/*      <td className="px-4 py-3">{doctor.department}</td>*/}
+              {/*      <td className="px-4 py-3">{doctor.experience} yrs</td>*/}
+              {/*      <td className="px-4 py-3">{doctor.qualification}</td>*/}
+              {/*      <td className="px-4 py-3 space-x-2">*/}
+              {/*        <button*/}
+              {/*            onClick={() => handleEditDoctor(doctor)}*/}
+              {/*            className="text-primary-600 hover:text-primary-900 p-1 rounded hover:bg-primary-50 transition-colors duration-200"*/}
+              {/*        >*/}
+              {/*          <FiEdit />*/}
+              {/*        </button>*/}
+              {/*        <button*/}
+              {/*            onClick={() => handleDeleteDoctor(doctor.id)}*/}
+              {/*            className="text-error-600 hover:text-error-900 p-1 rounded hover:bg-error-50 transition-colors duration-200"*/}
+              {/*        >*/}
+              {/*          <FiTrash2 />*/}
+              {/*        </button>*/}
+              {/*      </td>*/}
+              {/*    </tr>*/}
+              {/*))}*/}
+
             </tbody>
           </table>
 

@@ -49,7 +49,7 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             } />
 
-            {/* Admin Routes */}
+             Admin Routes
             <Route path="/dashboard/main" element={
                 <ProtectedRoute allowedRoles={['admin']}>
                     <Layout>
@@ -58,13 +58,25 @@ const AppRoutes = () => {
                 </ProtectedRoute>
             } />
 
-            <Route path="/doctors" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                    <Layout>
-                        <DoctorManagement />
-                    </Layout>
-                </ProtectedRoute>
-            } />
+
+            {/*<Route path="/doctors" element={*/}
+            {/*    <ProtectedRoute allowedRoles={['admin']}>*/}
+            {/*        <Layout>*/}
+            {/*            <DoctorManagement />*/}
+            {/*        </Layout>*/}
+            {/*    </ProtectedRoute>*/}
+            {/*} />*/}
+            <Route
+                path="/doctors"
+                element={
+                    <ProtectedRoute allowedRoles={['admin', 'doctor']}>
+                        <Layout>
+                            <DoctorManagement />
+                        </Layout>
+                    </ProtectedRoute>
+                }
+            />
+
 
             <Route path="/recipients" element={
                 <ProtectedRoute allowedRoles={['admin']}>
@@ -99,6 +111,7 @@ const AppRoutes = () => {
                     </Layout>
                 </ProtectedRoute>
             } />
+
 
             <Route path="/clinic/patients" element={
                 <ProtectedRoute allowedRoles={['receptionist']}>
