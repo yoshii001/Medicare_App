@@ -45,8 +45,57 @@ export const getUserRole = async (uid) => {
   const snapshot = await get(userRef);
   return snapshot.val()?.role || 'patient';
 };
+//
+
+export const createDoctor = async (doctorData) => {
+  try {
+    // Use secondary auth instance to avoid logging out admin
+    const userCredential = await createUserWithEmailAndPassword(secondaryAuth, doctorData.email, doctorData.password);
+    const uid = userCredential.user.uid;
+
+    // Optional: sign out secondary auth session (cleanup)
+    await signOut(secondaryAuth);
+
+    // Prepare doctor data (omit password)
+    const { password, ...doctorWithoutPassword } = doctorData;
+
+    const doctorRef = ref(database, `doctors/${uid}`);
+    await set(doctorRef, {
+      ...doctorWithoutPassword,
+      id: uid,
+      uid,
+      createdAt: new Date().toISOString(),
+    });
+
+    const userRef = ref(database, `users/${uid}`);
+    await set(userRef, {
+      email: doctorData.email,
+      role: 'doctor',
+      uid,
+      createdAt: new Date().toISOString(),
+    });
+
+    return uid;
+  } catch (error) {
+    console.error('Error creating doctor:', error);
+    throw error;
+  }
+};
+//getdoctor
+export const getDoctors = async () => {
+  return await getRecord('doctors');
+};
+//update doctor
+export const updateDoctor = async (doctorId, doctorData) => {
+  await updateRecord(`doctors/${doctorId}`, doctorData);
+};
+//delete doctor
+export const deleteDoctor = async (doctorId) => {
+  await deleteRecord(`doctors/${doctorId}`);
+};
 
 // Doctor operations
+{/*
 export const createDoctor = async (doctorData) => {
   return await createRecord('doctors', doctorData);
 };
@@ -62,6 +111,7 @@ export const updateDoctor = async (doctorId, doctorData) => {
 export const deleteDoctor = async (doctorId) => {
   await deleteRecord(`doctors/${doctorId}`);
 };
+*/}
 
 // Patient operations
 export const createPatient = async (patientData) => {
