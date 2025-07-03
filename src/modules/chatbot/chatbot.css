@@ -1,0 +1,86 @@
+/* chatbot.css */
+.chat-container {
+    max-width: 480px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.chat-container h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.chat-box {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #d1d5db;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: #f9fafb;
+    margin-bottom: 1rem;
+}
+
+.message {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    max-width: 75%;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.message.user {
+    background-color: #dbeafe;
+    text-align: right;
+    margin-left: auto;
+    color: #25253e;
+}
+
+.message.bot {
+    background-color: #f3f4f6;
+    text-align: left;
+    margin-right: auto;
+    color: #25253e;
+}
+
+.typing {
+    font-size: 0.875rem;
+    font-style: italic;
+    color: #6b7280;
+}
+
+.input-container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.input-container input {
+    flex-grow: 1;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid #d1d5db;
+}
+
+.input-container button {
+    background-color: #3b82f6;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.input-container button:hover {
+    background-color: #2563eb;
+}
+
+.input-container button:disabled {
+    background-color: #93c5fd;
+    cursor: not-allowed;
+}
