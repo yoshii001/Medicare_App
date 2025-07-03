@@ -455,9 +455,11 @@ const TimeSlotManagement = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
+                  {/*
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Patients
                   </th>
+                  */}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
@@ -503,6 +505,7 @@ const TimeSlotManagement = () => {
                         {slot.status || 'available'}
                       </span>
                     </td>
+                    {/*
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="space-y-1">
                         {Array.isArray(slot.assignedPatients) && slot.assignedPatients.length > 0 ? (
@@ -517,6 +520,7 @@ const TimeSlotManagement = () => {
                         )}
                       </div>
                     </td>
+                    */}
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex space-x-2">
                         <button
