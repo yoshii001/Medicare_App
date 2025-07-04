@@ -210,53 +210,6 @@ export const updateAppointmentStatus = async (appointmentId, status) => {
 
 //reseptionist
 
-
-//change 1
-
-/*
-export const createReceptionist = async (receptionistData) => {
-  try {
-    // Use secondary auth instance to avoid logging out admin
-    const userCredential = await createUserWithEmailAndPassword(
-      secondaryAuth,
-      receptionistData.email,
-      receptionistData.password
-    );
-    const uid = userCredential.user.uid;
-
-    // Sign out from secondary session (optional but recommended)
-    await signOut(secondaryAuth);
-
-    const { password, ...dataWithoutPassword } = receptionistData;
-
-    // Save in `receptionists` path
-    const receptionistRef = ref(database, `receptionists/${uid}`);
-    await set(receptionistRef, {
-      ...dataWithoutPassword,
-      id: uid,
-      uid,
-      createdAt: new Date().toISOString(),
-    });
-
-    // Also create an entry under `users/` with role = receptionist
-    const userRef = ref(database, `users/${uid}`);
-    await set(userRef, {
-      email: receptionistData.email,
-      role: 'receptionist',
-      uid,
-      createdAt: new Date().toISOString(),
-    });
-
-    return uid;
-  } catch (error) {
-    console.error("Error creating receptionist:", error);
-    throw error;
-  }
-};
-*/
-
-
-
 export const createReceptionist = async (receptionistData) => {
   try {
     // Create Firebase Auth user
@@ -307,24 +260,7 @@ export const createReceptionist = async (receptionistData) => {
 
 
 //change2
-/*
-export const createRecipient = async (recipientData) => {
-  return await createRecord('recipients', recipientData);
-};
 
-//
-export const getRecipients = async () => {
-  return await getRecord('recipients');
-};
-
-export const updateRecipient = async (recipientId, recipientData) => {
-  await updateRecord(`recipients/${recipientId}`, recipientData);
-};
-
-export const deleteRecipient = async (recipientId) => {
-  await deleteRecord(`recipients/${recipientId}`);
-};
-*/
 
 
 export const getRecipients = async () => {
