@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { getPatients, updatePatient, deletePatient, getPatientMedicalHistory, addMedicalHistory, updateMedicalHistory, deleteMedicalHistory } from '../../services/database.js';
 import { FiSearch, FiEdit, FiTrash2, FiUser, FiPlus, FiFileText } from 'react-icons/fi';
@@ -31,23 +31,57 @@ const PatientManagement = () => {
     }
   }, [searchTerm, patients]);
 
-  const loadPatients = async () => {
-    try {
-      const patientsData = await getPatients();
-      if (patientsData) {
-        // Filter patients assigned to current doctor
-        const doctorPatients = Object.values(patientsData).filter(p => p.doctorId === currentUser?.uid);
-        setPatients(doctorPatients);
-        setFilteredPatients(doctorPatients);
-      }
-    } catch (error) {
-      console.error('Error loading patients:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const loadPatients = async () => {
+  //   try {
+  //     const patientsData = await getPatients();
+  //     if (patientsData) {
+  //       // Filter patients assigned to current doctor
+  //       const doctorPatients = Object.values(patientsData).filter(p => p.doctorId === currentUser?.uid);
+  //       setPatients(doctorPatients);
+  //       setFilteredPatients(doctorPatients);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error loading patients:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+ // const loadPatients = async () => {
+ //    try {
+ //      const patientsData = await getPatients();
+ //      if (patientsData) {
+ //        const allPatients = Object.values(patientsData);
+ //        setPatients(allPatients);
+ //        setFilteredPatients(allPatients);
+ //      }
+ //    } catch (error) {
+ //      console.error('Error loading patients:', error);
+ //    } finally {
+ //      setLoading(false);
+ //    }
+ //  };
+    const loadPatients = async () => {
+        try {
+            const patientsData = await getPatients();
+            if (patientsData) {
+                // Only load patients assigned to current doctor
+                const doctorPatients = Object.entries(patientsData)
+                    .filter(([_, p]) => p.doctorId === currentUser?.uid)
+                    .map(([key, p]) => ({ ...p, id: p.id || key }));
 
-  const handleDeletePatient = async (patientId) => {
+                setPatients(doctorPatients);
+                setFilteredPatients(doctorPatients);
+            }
+        } catch (error) {
+            console.error('Error loading patients:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+
+    const handleDeletePatient = async (patientId) => {
     if (window.confirm('Are you sure you want to delete this patient?')) {
       try {
         await deletePatient(patientId);
@@ -232,3 +266,5 @@ const PatientManagement = () => {
 };
 
 export default PatientManagement;
+
+

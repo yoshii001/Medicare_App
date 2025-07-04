@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { FiX, FiCalendar, FiFileText } from 'react-icons/fi';
 
 const MedicalHistoryModal = ({ patient, history, onSave, onClose }) => {
