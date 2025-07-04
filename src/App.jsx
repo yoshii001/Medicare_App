@@ -27,6 +27,8 @@ import ClinicManagement from './modules/clinic/ClinicManagement.jsx';
 
 import AppointmentList from './modules/appointment/AppointmentList.jsx';
 
+import ReceptionistProfile from './modules/clinic/ReceptionistProfile.jsx'
+
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
 
@@ -158,6 +160,17 @@ const AppRoutes = () => {
     </Layout>
   </ProtectedRoute>
 } />
+
+{/*..............*/}
+<Route path="/receptionist/:email" element={
+  <ProtectedRoute allowedRoles={['receptionist']}>
+    <Layout>
+      <ReceptionistProfile />
+    </Layout>
+  </ProtectedRoute>
+} />
+
+
 
 
 {/*---------*/}
