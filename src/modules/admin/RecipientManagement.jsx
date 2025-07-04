@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { getRecipients, createRecipient, updateRecipient, deleteRecipient } from '../../services/database.js';
 import { FiPlus, FiEdit, FiTrash2, FiUser, FiMail, FiPhone, FiSearch } from 'react-icons/fi';
