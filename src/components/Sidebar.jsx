@@ -64,7 +64,7 @@ const Sidebar = () => {
         //AppointmentList
         { path: '/AppointmentList', icon: FiTag, label: 'Appoinments' },
 
-        { path: `/receptionist/${encodeURIComponent(userEmail)}`, icon: FiUsers, label: 'My Profile' }
+        { path: `/receptionist/${encodeURIComponent(userEmail)}`, icon: FiUser, label: 'My Profile' }
        
         ];
       

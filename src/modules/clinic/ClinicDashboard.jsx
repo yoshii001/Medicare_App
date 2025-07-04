@@ -11,11 +11,22 @@ import {
   FiUsers,
   FiCalendar,
   FiClock,
-  FiActivity
+  FiActivity,
+  FiUser
 } from 'react-icons/fi';
 import { format } from 'date-fns';
 
+import { Link } from 'react-router-dom';
+
+import { useAuth } from '../../context/AuthContext.jsx';
+
+
 const ClinicDashboard = () => {
+  //
+  const { currentUser } = useAuth();
+  const userEmail = currentUser?.email || '';
+
+  //
   const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState({
     totalPatients: 0,
@@ -125,8 +136,9 @@ const ClinicDashboard = () => {
         <StatCard icon={FiClock} title="Available Slots" value={stats.availableSlots} subtitle="Next: 2:00 PM" />
         <StatCard icon={FiActivity} title="Active Clinics" value={stats.totalClinics} subtitle="All operational" />
       </div>
-
+     
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/*
         <div className="card">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-4">
@@ -147,7 +159,57 @@ const ClinicDashboard = () => {
               <p className="text-sm font-medium text-purple-900">View Profile</p>
             </button>
           </div>
+          
         </div>
+        */}
+
+
+
+
+  <div className="card">
+    <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+    <div className="grid grid-cols-2 gap-4">
+
+      {/* 👉 Manage Time Slots */}
+      <Link
+        to="/clinic/timeslots"
+        className="p-4 bg-primary-50 rounded-lg text-center hover:bg-primary-100 transition-colors duration-200"
+      >
+        <FiActivity className="text-primary-600 text-2xl mx-auto mb-2" />
+        <p className="text-sm font-medium text-primary-900">Manage Time Slots</p>
+      </Link>
+
+      {/* 👉 Manage Patients */}
+      <Link
+        to="/clinic/patients"
+        className="p-4 bg-success-50 rounded-lg text-center hover:bg-success-100 transition-colors duration-200"
+      >
+        <FiUsers className="text-success-600 text-2xl mx-auto mb-2" />
+        <p className="text-sm font-medium text-success-900">Manage Patients</p>
+      </Link>
+
+      {/* 👉 Manage Appointments */}
+      <Link
+        to="/AppointmentList"
+        className="p-4 bg-warning-50 rounded-lg text-center hover:bg-warning-100 transition-colors duration-200"
+      >
+        <FiClock className="text-warning-600 text-2xl mx-auto mb-2" />
+        <p className="text-sm font-medium text-warning-900">Manage Appointments</p>
+      </Link>
+
+      {/* 👉 View Profile */}
+      <Link
+            to={`/receptionist/${encodeURIComponent(userEmail)}`} // ✅ URL-safe email
+            className="p-4 bg-purple-50 rounded-lg text-center hover:bg-purple-100 transition"
+          >
+            <FiUser className="text-purple-600 text-2xl mx-auto mb-2" />
+            <p className="text-sm font-medium text-purple-900">View Profile</p>
+          </Link>
+
+    </div>
+  </div>
+
+{/*....*/}
 
         <div className="card">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Today's Schedule</h3>
