@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FiX, FiUser, FiMail, FiPhone, FiMapPin, FiTag } from 'react-icons/fi';
 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../services/firebase'; // path to your firebase config
+import { auth } from '../../services/firebase'; // path to your firebase configaration
 
 //
 import { createReceptionist } from '../../services/database'
