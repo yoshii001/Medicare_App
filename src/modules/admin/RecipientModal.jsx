@@ -26,42 +26,7 @@ const RecipientModal = ({ recipient, onSave, onClose }) => {
         }
     }, [recipient]);
 
-    /*
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSave(formData);
-    };
-*/
- 
-/*
-const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-        // 1. Firebase Authentication - Create new user
-        const userCredential = await createUserWithEmailAndPassword(
-            auth,
-            formData.email,
-            formData.password
-        );
-
-        const user = userCredential.user;
-
-        // 2. Remove password before saving form data
-        const { password, ...recipientData } = formData;
-
-        // 3. Save the rest of the recipient data to DB or parent handler
-        onSave({
-            ...recipientData,
-            uid: user.uid
-        });
-    } catch (error) {
-        console.error("Error creating user:", error.message);
-        alert("Failed to create user: " + error.message);
-    }
-};
-*/
-
-
+    
 const handleSubmit = async (e) => {
     e.preventDefault();
     try {

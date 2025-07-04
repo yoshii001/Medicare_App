@@ -211,7 +211,9 @@ export const updateAppointmentStatus = async (appointmentId, status) => {
 //reseptionist
 
 
-//
+//change 1
+
+/*
 export const createReceptionist = async (receptionistData) => {
   try {
     // Use secondary auth instance to avoid logging out admin
@@ -251,8 +253,61 @@ export const createReceptionist = async (receptionistData) => {
     throw error;
   }
 };
+*/
 
 
+
+export const createReceptionist = async (receptionistData) => {
+  try {
+    // Create Firebase Auth user
+    const userCredential = await createUserWithEmailAndPassword(
+      secondaryAuth,
+      receptionistData.email,
+      receptionistData.password
+    );
+    const uid = userCredential.user.uid;
+
+    await signOut(secondaryAuth);
+
+    const { password, ...dataWithoutPassword } = receptionistData;
+
+    // Save to `receptionists/`
+    const receptionistRef = ref(database, `receptionists/${uid}`);
+    await set(receptionistRef, {
+      ...dataWithoutPassword,
+      id: uid,
+      uid,
+      createdAt: new Date().toISOString(),
+    });
+
+    // Save to `recipients/` so the table shows the name/email/phone/category
+    const recipientRef = ref(database, `recipients/${uid}`);
+    await set(recipientRef, {
+      ...dataWithoutPassword,
+      id: uid,
+      uid,
+      createdAt: new Date().toISOString(),
+    });
+
+    // Save to `users/` for role
+    const userRef = ref(database, `users/${uid}`);
+    await set(userRef, {
+      email: receptionistData.email,
+      role: 'receptionist',
+      uid,
+      createdAt: new Date().toISOString(),
+    });
+
+    return uid;
+  } catch (error) {
+    console.error("Error creating receptionist:", error);
+    throw error;
+  }
+};
+
+
+//change2
+/*
 export const createRecipient = async (recipientData) => {
   return await createRecord('recipients', recipientData);
 };
@@ -268,4 +323,22 @@ export const updateRecipient = async (recipientId, recipientData) => {
 
 export const deleteRecipient = async (recipientId) => {
   await deleteRecord(`recipients/${recipientId}`);
+};
+*/
+
+
+export const getRecipients = async () => {
+  return await getRecord('receptionists'); // 
+};
+
+export const updateRecipient = async (recipientId, recipientData) => {
+  await updateRecord(`receptionists/${recipientId}`, recipientData); // 
+};
+
+export const deleteRecipient = async (recipientId) => {
+  await deleteRecord(`receptionists/${recipientId}`); // 
+};
+
+export const createRecipient = async (recipientData) => {
+  return await createRecord('receptionists', recipientData); // 
 };
