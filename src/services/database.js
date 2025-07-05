@@ -1,8 +1,3 @@
-
-
-
-
-
 /*new */
 
 import { database, auth,secondaryAuth } from './firebase.js';
@@ -52,6 +47,26 @@ export const getUserRole = async (uid) => {
   const snapshot = await get(userRef);
   return snapshot.val()?.role || 'patient';
 };
+
+// Chat operations
+export const saveChatMessage = async (userId, userType, message, messageType) => {
+  const messageId = uuidv4();
+  const messageRef = ref(database, `chatMessages/${userId}/${messageId}`);
+  await set(messageRef, {
+    id: messageId,
+    userId,
+    userType,
+    message,
+    messageType,
+    createdAt: new Date().toISOString(),
+  });
+  return messageId;
+};
+
+export const getChatHistory = async (userId) => {
+  return await getRecord(`chatMessages/${userId}`);
+};
+
 //
 
 export const createDoctor = async (doctorData) => {
