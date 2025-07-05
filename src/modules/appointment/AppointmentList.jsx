@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAppointments, createAppointment, updateAppointmentStatus } from '../../services/database.js';
 import { FiPlus, FiCalendar, FiClock, FiUser, FiCheck, FiX } from 'react-icons/fi';
 import { format } from 'date-fns';
-
+//
 const AppointmentList = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
